@@ -174,6 +174,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet);
           </select>
         </div>
       </div>
+      <div class="row">
+        <div class="field"><label for="bt-social-platform">Your socials</label>
+          <select id="bt-social-platform" name="social_platform">
+            <option value="instagram" selected>Instagram</option>
+            <option value="facebook">Facebook</option>
+          </select></div>
+        <div class="field"><label for="bt-social">Handle or profile link</label><input type="text" id="bt-social" name="social_handle" maxlength="200" placeholder="@yourname" autocomplete="off" required><span class="err" data-for="bt-social"></span></div>
+      </div>
       <div class="field"><label for="bt-usecase">What would you have Dottie do for you?</label>
         <textarea id="bt-usecase" name="use_case" maxlength="2000" placeholder="e.g. walk me through Premiere, sort my receipts every month, take notes in my client calls…" required></textarea><span class="err" data-for="bt-usecase"></span></div>
       <div class="field">
@@ -289,12 +297,14 @@ document.getElementById('betaForm').addEventListener('submit', async event => {
   const nameInput = document.getElementById('bt-name');
   const emailInput = document.getElementById('bt-email');
   const useCaseInput = document.getElementById('bt-usecase');
+  const socialInput = document.getElementById('bt-social');
   const statusElement = document.getElementById('bt-status');
   showStatus(statusElement, '');
   const nameIsOk = requireText(nameInput, 'Tell us your name.');
   const emailIsOk = requireEmail(emailInput);
+  const socialIsOk = requireText(socialInput, 'Add your Instagram or Facebook so we can say hi.');
   const useCaseIsOk = requireText(useCaseInput, 'A sentence or two is plenty.');
-  if (!nameIsOk || !emailIsOk || !useCaseIsOk) { (nameIsOk ? (emailIsOk ? useCaseInput : emailInput) : nameInput).focus(); return; }
+  if (!nameIsOk || !emailIsOk || !socialIsOk || !useCaseIsOk) { (!nameIsOk ? nameInput : !emailIsOk ? emailInput : !socialIsOk ? socialInput : useCaseInput).focus(); return; }
   if (document.getElementById('bt-website').value) return;
   const submitButton = document.getElementById('bt-submit');
   submitButton.disabled = true; submitButton.textContent = 'Sending…';
@@ -306,6 +316,8 @@ document.getElementById('betaForm').addEventListener('submit', async event => {
     use_case: useCaseInput.value.trim(),
     usage_frequency: document.querySelector('input[name="usage_frequency"]:checked').value,
     heard_from: document.getElementById('bt-heard').value || null,
+    social_platform: document.getElementById('bt-social-platform').value,
+    social_handle: socialInput.value.trim(),
     feedback_ok: document.getElementById('bt-feedback').checked
   });
   submitButton.disabled = false; submitButton.textContent = 'Send my application';

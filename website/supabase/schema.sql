@@ -49,3 +49,10 @@ create policy "anyone can join the waitlist" on public.waitlist
 drop policy if exists "anyone can apply to the beta" on public.beta_applications;
 create policy "anyone can apply to the beta" on public.beta_applications
   for insert to anon with check (status = 'new');
+
+-- 2026-11-03: beta testers share an Instagram or Facebook handle.
+alter table public.beta_applications add column if not exists social_platform text, add column if not exists social_handle text;
+alter table public.beta_applications add constraint beta_social_lengths check (
+  char_length(coalesce(social_platform,'')) <= 20 and char_length(coalesce(social_handle,'')) <= 200
+  and (social_platform is null or social_platform in ('instagram','facebook'))
+);
